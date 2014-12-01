@@ -8,21 +8,26 @@ using System.Threading.Tasks;
 
 namespace ObservableCmdlet.Lib
 {
-    public class Library
+public class Library
+{
+    public IObservable<string> InvokeHello()
     {
-        public IObservable<string> InvokeHello()
+        var subject = new Subject<string>();
+        ThreadPool.QueueUserWorkItem(async _ =>
         {
-            var subject = new Subject<string>();
-            ThreadPool.QueueUserWorkItem(async _ =>
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                subject.OnNext("start");
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                subject.OnNext("complete");
-                subject.OnCompleted();
-            });
-            subject.OnNext("return subject");
-            return subject;
-        }
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            subject.OnNext("start");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            subject.OnNext("1");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            subject.OnNext("2");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            subject.OnNext("3");
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            subject.OnNext("complete");
+            subject.OnCompleted();
+        });
+        return subject;
     }
+}
 }
